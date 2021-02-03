@@ -47,7 +47,10 @@ class ApplicantsController extends Controller
             ->where('users.id',$request->session()->get('user_id'))->paginate(5);
 			
 			
+		$degree_date =0;	
+		if(!empty($applicants[0])){
 		$degree_date = $applicants[0]->year_of_passing; //y-m-d
+		}
 		$findPenality = $this->findPenality($degree_date);
 	
 
