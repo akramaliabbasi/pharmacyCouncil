@@ -37,23 +37,18 @@ class ApplicantsController extends Controller
 			->with('success','Registered successfully! Login Please');
 		}
 
-        //$applicants = Applicants::latest()->paginate(5);
-		//$applicants = Applicants::where('user_id',$request->session()->get('user_id'))->paginate(5);
-		$applicants = DB::table('application_forms')
-            ->join('users', 'application_forms.user_id', '=', 'users.id')
-            ->join('applicants', 'application_forms.applicants_id', '=', 'applicants.id')
-            ->join('contact_informations', 'application_forms.contact_information_id', '=', 'contact_informations.id')
-            ->join('qualification_informations', 'application_forms.qualification_information_id', '=', 'qualification_informations.id')
-            ->where('users.id',$request->session()->get('user_id'))->paginate(5);
-			
-			
-		$degree_date =0;	
-		if(!empty($applicants[0])){
-		$degree_date = $applicants[0]->year_of_passing; //y-m-d
+       //$applicants = Applicants::latest()->paginate(5);
+		$applicants = Applicants::where('user_id',$request->session()->get('user_id'))->paginate(5);
+		$qualification_information = qualification_information::where('user_id',$request->session()->get('user_id'))->get();
+		
+		$findPenality = array();	
+		$degree_date = Date("Y-m-d");	
+		
+		if(isset($qualification_information[0])){
+			$degree_date = $qualification_information[0]->year_of_passing; //y-m-d
 		}
 		$findPenality = $this->findPenality($degree_date);
 	
-
         return view('applicants.index',compact('applicants','findPenality'))
         ->with('i', (request()->input('page', 1) - 1) * 5);
     }
